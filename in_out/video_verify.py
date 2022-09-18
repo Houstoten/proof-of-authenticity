@@ -3,11 +3,11 @@ import hashlib
 import pickle
 
 
-def video_verify(input_path):
+def video_verify(input_path, videohash_path):
 
     #open the files to check hashes with originals
-    video = cv2.VideoCapture(input_path + ".mp4")
-    hashfile = open(input_path + '.videohash','r')
+    video = cv2.VideoCapture(input_path)
+    hashfile = open(videohash_path + '.videohash','r')
     lasthash = "" #initial value, good for the code below, and posiibilty to add initial hash from the main network
     result = True
     while(video.isOpened()):
@@ -25,4 +25,4 @@ def video_verify(input_path):
     hashfile.close()
     return result
 
-video_verify("cam_video")
+# video_verify("cam_video")

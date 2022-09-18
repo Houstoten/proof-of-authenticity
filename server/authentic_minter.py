@@ -3,8 +3,9 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 from requests import get
 import json
+from urllib.request import urlopen
 
-f = open('AuthenticContentAbi.json')
+f = open('./server/AuthenticContentAbi.json')
 
 authentic_content_abi = json.load(f)
 
@@ -13,12 +14,9 @@ account_from = {
   'address': "0x51349f6D250A50AA73b599EcB953f008BEF4FCbC"
 }
 
-metadata_sample = {
-  'name': 'video.mp4',
-  'rootHash': 'some-hash-string'
-}
+# metadata_sample = json.load(open('../static/cam_video.json'))
 
-metadataUrl = "https://pastebin.com/raw/ByjtCGnt"
+metadataUrl = "https://9eb1-45-12-26-41.ngrok.io/cam_video.json"
 
 alchemy_url = "https://polygon-mumbai.g.alchemy.com/v2/rXZnrDW_tn8eJKsFn-IXJaOR5TntMTPK"
 w3 = Web3(Web3.HTTPProvider(alchemy_url))
@@ -50,7 +48,7 @@ def mint_authenticity_token(metadataURL: json):
 
 ####################################################
 
-def check(content_name: string, hash_to_check: string):
+def check(content_name: string):
   url = "https://deep-index.moralis.io/api/v2/nft/search?chain=mumbai&format=decimal&q="+content_name+"&filter=name&addresses=0xcbf1502abc69ba54631a99c4901b652a9e8f4308"
 
   headers = {
@@ -62,13 +60,18 @@ def check(content_name: string, hash_to_check: string):
 
   json_response = json.loads(response.text)
 
+  # print(json_response)
   if json_response['total'] == 0:
     print("No content with such name!")
-    return
+    return None
+
+  urlOpened = urlopen(json_response['result'][0]['token_uri'])
+
+  return json.loads(urlOpened.read())['videohashURL']
   
-  if json.loads(json_response['result'][0]['metadata'])['rootHash'] == hash_to_check:
-    print("Hash matches!")
+  # if json.loads(json_response['result'][0]['metadata'])['rootHash'] == hash_to_check:
+  #   print("Hash matches!")
 
-  print("No match!")
+  # print("No match!")
 
-# check(metadata_sample['name'], metadata_sample['rootHash'])
+# check(metadata_sample['name'])
