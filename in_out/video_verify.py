@@ -5,18 +5,22 @@ import pickle
 
 input_path = "cam_video"
 
-#reopen the file to make hashes (since video stream was compressed it will not match to the original frames before the compression)
+#open the files to check hashes with originals
 video = cv2.VideoCapture(input_path + ".mp4")
-outputfile = open(input_path + '.videohashverify','w')
+hashfile = open(input_path + '.videohash','r')
 lasthash = "" #initial value, good for the code below, and posiibilty to add initial hash from the main network
+result = True
 while(video.isOpened()):
     ret,frame = video.read()
     if frame is None:
         break
     lasthash = hashlib.sha256((str(pickle.dumps(frame)) + lasthash).encode('utf-8')).hexdigest() #process the frame, combine hash from previous frame
-    outputfile.write(lasthash + '\n')
+    if hashfile.readline().replace('\n','') != lasthash:
+        result = False
+        break
 
 
-#release the video stream and close the file
+#close the hash and video files; report result
 video.release()
-outputfile.close()
+hashfile.close()
+print(result)
