@@ -3,7 +3,7 @@ import pickle
 import hashlib
 
 #desired path. can be a input arg
-output_path = "/Users/sergii/proof-of-video/proof-of-authenticity/cam_video"
+output_path = "cam_video"
 
 
 #get the video stream from device 0 (main webcam) and configure all the stuff
